@@ -4,6 +4,14 @@ import { makeShuffledDeck } from "./utils.js";
 
 import RoundHeader from "./components/RoundHeader";
 
+const isCurrCardsSame = (arr1, arr2) => {
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) return false;
+    }
+
+    return true;
+};
+
 class App extends React.Component {
     constructor(props) {
         // Always call super with props in constructor to initialise parent class
@@ -21,17 +29,32 @@ class App extends React.Component {
         };
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!isCurrCardsSame(this.state.currCards, prevState.currCards)) {
+            this.getRoundWinner();
+        }
+    }
+
     dealCards = () => {
-        this.setState(
-            (state) => ({
-                // Remove last 2 cards from cardDeck
-                cardDeck: state.cardDeck.slice(0, -2),
-                // Deal last 2 cards to currCards
-                currCards: state.cardDeck.slice(-2),
-            }),
-            () => this.getRoundWinner()
-        );
+        this.setState((state) => ({
+            // Remove last 2 cards from cardDeck
+            cardDeck: state.cardDeck.slice(0, -2),
+            // Deal last 2 cards to currCards
+            currCards: state.cardDeck.slice(-2),
+        }));
     };
+
+    // dealCards = () => {
+    //     this.setState(
+    //         (state) => ({
+    //             // Remove last 2 cards from cardDeck
+    //             cardDeck: state.cardDeck.slice(0, -2),
+    //             // Deal last 2 cards to currCards
+    //             currCards: state.cardDeck.slice(-2),
+    //         }),
+    //         () => this.getRoundWinner()
+    //     );
+    // };
 
     getRoundWinner = () => {
         if (this.state.currCards.length > 0) {
